@@ -16,17 +16,17 @@
     #game, #score {
       display: none;
     }
+    .color-circle {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      margin: 10px;
+    }
     .image-button {
       border: none;
       background: none;
       cursor: pointer;
-      margin: 10px;
-    }
-    .image-button img {
-      width: 150px;
-      height: 150px;
-      border-radius: 16px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
     #game-images {
       display: flex;
@@ -67,45 +67,28 @@
 
   <script>
     const colors = [
-      { word: 'אדום', image: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Red_circle.svg' },
-      { word: 'כחול', image: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Blue_circle.svg' },
-      { word: 'ירוק', image: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Green_circle.svg' }
+      { word: 'אדום', color: 'red' },
+      { word: 'כחול', color: 'blue' },
+      { word: 'ירוק', color: 'green' },
+      { word: 'צהוב', color: 'yellow' },
+      { word: 'סגול', color: 'purple' }
     ];
 
     let correctWord = '';
     let score = 0;
     let questionCount = 0;
-    let voicesLoaded = false;
-
-    function loadVoices(callback) {
-      const voices = speechSynthesis.getVoices();
-      if (voices.length !== 0) {
-        voicesLoaded = true;
-        callback();
-      } else {
-        speechSynthesis.onvoiceschanged = () => {
-          voicesLoaded = true;
-          callback();
-        };
-      }
-    }
 
     function speak(text) {
-      if (!voicesLoaded) return console.log("Voices not loaded yet");
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'he-IL';
-      const voice = speechSynthesis.getVoices().find(v => v.lang === 'he-IL');
-      if (voice) utterance.voice = voice;
       speechSynthesis.speak(utterance);
     }
 
     function startGame() {
-      loadVoices(() => {
-        document.getElementById('home').style.display = 'none';
-        document.getElementById('score').style.display = 'none';
-        document.getElementById('game').style.display = 'block';
-        nextQuestion();
-      });
+      document.getElementById('home').style.display = 'none';
+      document.getElementById('score').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+      nextQuestion();
     }
 
     function nextQuestion() {
@@ -119,12 +102,10 @@
       options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'image-button';
-        const img = document.createElement('img');
-        img.src = opt.image;
-        img.onerror = () => {
-          img.src = 'https://via.placeholder.com/150?text=Image+not+found';
-        };
-        btn.appendChild(img);
+        const div = document.createElement('div');
+        div.className = 'color-circle';
+        div.style.backgroundColor = opt.color;
+        btn.appendChild(div);
         btn.onclick = () => checkAnswer(opt.word);
         container.appendChild(btn);
       });
