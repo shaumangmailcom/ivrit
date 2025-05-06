@@ -2,7 +2,7 @@
 <html lang="he">
 <head>
   <meta charset="UTF-8">
-  <title>מבחן עברית לילדים</title>
+  <title>מבחן עברית לילדים - חיות בלבד</title>
   <style>
     body {
       font-family: sans-serif;
@@ -13,7 +13,7 @@
     h1 {
       font-size: 32px;
     }
-    #categories, #game, #score {
+    #game, #score {
       display: none;
     }
     .image-button {
@@ -28,7 +28,7 @@
       border-radius: 16px;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
-    #category-images, #game-images {
+    #game-images {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
@@ -48,21 +48,9 @@
   </style>
 </head>
 <body>
-  <h1>מבחן עברית לילדים</h1>
+  <h1>מבחן חיות בעברית</h1>
   <div id="home">
-    <button onclick="showCategories()">התחל</button>
-  </div>
-
-  <div id="categories">
-    <h2>בחר קטגוריה</h2>
-    <div id="category-images">
-      <button class="image-button" onclick="startGame('animals')"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Jack_Russell_Terrier_1.jpg" alt="animals"></button>
-      <button class="image-button" onclick="startGame('colors')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Red_circle.svg/512px-Red_circle.svg.png" alt="colors"></button>
-      <button class="image-button" onclick="startGame('food')"><img src="https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg" alt="food"></button>
-      <button class="image-button" onclick="startGame('family')"><img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Father_and_son.jpg" alt="family"></button>
-      <button class="image-button" onclick="startGame('gender')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Emoji_u1f466.svg/1200px-Emoji_u1f466.svg.png" alt="gender"></button>
-      <button class="image-button" onclick="startGame('numbers')"><img src="https://upload.wikimedia.org/wikipedia/commons/7/75/1.svg" alt="numbers"></button>
-    </div>
+    <button onclick="startGame()">התחל</button>
   </div>
 
   <div id="game">
@@ -71,51 +59,39 @@
 
   <div id="score">
     <div id="stars"></div>
-    <button onclick="showCategories()">שחק קטגוריה אחרת</button>
+    <button onclick="location.reload()">שחק שוב</button>
   </div>
 
   <audio id="success-sound" src="https://www.soundjay.com/buttons/sounds/button-4.mp3"></audio>
   <audio id="fail-sound" src="https://www.soundjay.com/button/beep-10.mp3"></audio>
 
   <script>
-    const data = {
-      animals: [
-        { word: 'כלב', image: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Jack_Russell_Terrier_1.jpg' },
-        { word: 'חתול', image: 'https://upload.wikimedia.org/wikipedia/commons/6/69/June_odd-eyed-cat_cropped.jpg' },
-        { word: 'פרה', image: 'https://upload.wikimedia.org/wikipedia/commons/1/14/Cow_female_black_white.jpg' }
-      ],
-      colors: [
-        { word: 'אדום', image: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Red_circle.svg' },
-        { word: 'כחול', image: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Blue_circle.png' },
-        { word: 'ירוק', image: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Green_circle.svg' }
-      ],
-      food: [
-        { word: 'תפוח', image: 'https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg' },
-        { word: 'לחם', image: 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Bread.jpg' },
-        { word: 'עוגה', image: 'https://upload.wikimedia.org/wikipedia/commons/f/f8/Cake.jpg' }
-      ],
-      family: [
-        { word: 'אמא', image: 'https://upload.wikimedia.org/wikipedia/commons/e/ee/Mother_and_daughter_portrait.jpg' },
-        { word: 'אבא', image: 'https://upload.wikimedia.org/wikipedia/commons/0/03/Father_and_son.jpg' },
-        { word: 'אח', image: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Brother_and_sister.jpg' }
-      ],
-      gender: [
-        { word: 'ילד', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Emoji_u1f466.svg/1200px-Emoji_u1f466.svg.png' },
-        { word: 'ילדה', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Emoji_u1f467.svg/1200px-Emoji_u1f467.svg.png' }
-      ],
-      numbers: [
-        { word: 'אחת', image: 'https://upload.wikimedia.org/wikipedia/commons/7/75/1.svg' },
-        { word: 'שתיים', image: 'https://upload.wikimedia.org/wikipedia/commons/3/3f/2.svg' },
-        { word: 'שלוש', image: 'https://upload.wikimedia.org/wikipedia/commons/f/f0/3.svg' }
-      ]
-    };
+    const animals = [
+      { word: 'כלב', image: 'https://cdn-icons-png.flaticon.com/512/616/616408.png' },
+      { word: 'חתול', image: 'https://cdn-icons-png.flaticon.com/512/616/6164087.png' },
+      { word: 'פרה', image: 'https://cdn-icons-png.flaticon.com/512/1998/1998611.png' }
+    ];
 
-    let currentSet = [];
     let correctWord = '';
     let score = 0;
     let questionCount = 0;
+    let voicesLoaded = false;
+
+    function loadVoices(callback) {
+      const voices = speechSynthesis.getVoices();
+      if (voices.length !== 0) {
+        voicesLoaded = true;
+        callback();
+      } else {
+        speechSynthesis.onvoiceschanged = () => {
+          voicesLoaded = true;
+          callback();
+        };
+      }
+    }
 
     function speak(text) {
+      if (!voicesLoaded) return console.log("Voices not loaded yet");
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'he-IL';
       const voice = speechSynthesis.getVoices().find(v => v.lang === 'he-IL');
@@ -123,27 +99,18 @@
       speechSynthesis.speak(utterance);
     }
 
-    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
-
-    function showCategories() {
-      document.getElementById('home').style.display = 'none';
-      document.getElementById('score').style.display = 'none';
-      document.getElementById('categories').style.display = 'block';
-    }
-
-    function startGame(category) {
-      currentSet = data[category];
-      questionCount = 0;
-      score = 0;
-      document.getElementById('categories').style.display = 'none';
-      document.getElementById('score').style.display = 'none';
-      document.getElementById('game').style.display = 'block';
-      nextQuestion();
+    function startGame() {
+      loadVoices(() => {
+        document.getElementById('home').style.display = 'none';
+        document.getElementById('score').style.display = 'none';
+        document.getElementById('game').style.display = 'block';
+        nextQuestion();
+      });
     }
 
     function nextQuestion() {
       questionCount++;
-      const options = [...currentSet].sort(() => 0.5 - Math.random()).slice(0, 3);
+      const options = [...animals].sort(() => 0.5 - Math.random()).slice(0, 3);
       const answer = options[Math.floor(Math.random() * options.length)];
       correctWord = answer.word;
       speak(correctWord);
