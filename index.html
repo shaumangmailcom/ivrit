@@ -2,7 +2,7 @@
 <html lang="he">
 <head>
   <meta charset="UTF-8">
-  <title>Ivrit test</title>
+  <title>מבחן עברית לילדים</title>
   <style>
     body {
       font-family: sans-serif;
@@ -10,25 +10,24 @@
       text-align: center;
       direction: rtl;
     }
-
-    #game, #score {
+    h1 {
+      font-size: 32px;
+    }
+    #categories, #game, #score {
       display: none;
     }
-
     .image-button {
       border: none;
       background: none;
       cursor: pointer;
       margin: 10px;
     }
-
     .image-button img {
       width: 150px;
       height: 150px;
       border-radius: 16px;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
-
     #images {
       display: flex;
       justify-content: center;
@@ -36,12 +35,10 @@
       gap: 20px;
       margin-top: 20px;
     }
-
     #stars {
       font-size: 32px;
       margin-top: 20px;
     }
-
     button {
       padding: 12px 24px;
       font-size: 18px;
@@ -51,8 +48,22 @@
   </style>
 </head>
 <body>
-  <h1>🐾</h1>
-  <button onclick="startGame()">התחל</button>
+  <h1>מבחן עברית לילדים</h1>
+  <div id="home">
+    <button onclick="showCategories()">התחל</button>
+  </div>
+
+  <div id="categories">
+    <h2>בחר קטגוריה</h2>
+    <div id="images">
+      <button class="image-button" onclick="startGame('animals')"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Jack_Russell_Terrier_1.jpg" alt="animals"></button>
+      <button class="image-button" onclick="startGame('colors')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Red_circle.svg/512px-Red_circle.svg.png" alt="colors"></button>
+      <button class="image-button" onclick="startGame('food')"><img src="https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg" alt="food"></button>
+      <button class="image-button" onclick="startGame('family')"><img src="https://upload.wikimedia.org/wikipedia/commons/0/03/Father_and_son.jpg" alt="family"></button>
+      <button class="image-button" onclick="startGame('gender')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Emoji_u1f466.svg/1200px-Emoji_u1f466.svg.png" alt="gender"></button>
+      <button class="image-button" onclick="startGame('numbers')"><img src="https://upload.wikimedia.org/wikipedia/commons/7/75/1.svg" alt="numbers"></button>
+    </div>
+  </div>
 
   <div id="game">
     <div id="images"></div>
@@ -60,22 +71,46 @@
 
   <div id="score">
     <div id="stars"></div>
-    <button onclick="startGame()">נסה שוב</button>
+    <button onclick="showCategories()">שחק קטגוריה אחרת</button>
   </div>
 
   <script>
-    const animals = [
-      { word: 'כלב', image: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Jack_Russell_Terrier_1.jpg' },
-      { word: 'חתול', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/81_INF_DIV_SSI.jpg/320px-81_INF_DIV_SSI.jpg' },
-      { word: 'פרה', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cow_female_black_white.jpg/320px-Cow_female_black_white.jpg' },
-      { word: 'סוס', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Horse_in_field.jpg/320px-Horse_in_field.jpg' },
-      { word: 'תרנגול', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Rooster_portrait2.jpg/320px-Rooster_portrait2.jpg' },
-      { word: 'דג', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Goldfish3.jpg/320px-Goldfish3.jpg' }
-    ];
+    const data = {
+      animals: [
+        { word: 'כלב', image: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Jack_Russell_Terrier_1.jpg' },
+        { word: 'חתול', image: 'https://upload.wikimedia.org/wikipedia/commons/6/69/June_odd-eyed-cat_cropped.jpg' },
+        { word: 'פרה', image: 'https://upload.wikimedia.org/wikipedia/commons/1/14/Cow_female_black_white.jpg' }
+      ],
+      colors: [
+        { word: 'אדום', image: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Red_circle.svg' },
+        { word: 'כחול', image: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Blue_circle.png' },
+        { word: 'ירוק', image: 'https://upload.wikimedia.org/wikipedia/commons/6/6f/Green_circle.svg' }
+      ],
+      food: [
+        { word: 'תפוח', image: 'https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg' },
+        { word: 'לחם', image: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Bread.jpg' },
+        { word: 'עוגה', image: 'https://upload.wikimedia.org/wikipedia/commons/0/02/Birthday_cake.jpg' }
+      ],
+      family: [
+        { word: 'אמא', image: 'https://upload.wikimedia.org/wikipedia/commons/e/ee/Mother_and_daughter_portrait.jpg' },
+        { word: 'אבא', image: 'https://upload.wikimedia.org/wikipedia/commons/0/03/Father_and_son.jpg' },
+        { word: 'אח', image: 'https://upload.wikimedia.org/wikipedia/commons/7/7e/Brother_and_sister.jpg' }
+      ],
+      gender: [
+        { word: 'ילד', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Emoji_u1f466.svg/1200px-Emoji_u1f466.svg.png' },
+        { word: 'ילדה', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Emoji_u1f467.svg/1200px-Emoji_u1f467.svg.png' }
+      ],
+      numbers: [
+        { word: 'אחת', image: 'https://upload.wikimedia.org/wikipedia/commons/7/75/1.svg' },
+        { word: 'שתיים', image: 'https://upload.wikimedia.org/wikipedia/commons/3/3f/2.svg' },
+        { word: 'שלוש', image: 'https://upload.wikimedia.org/wikipedia/commons/f/f0/3.svg' }
+      ]
+    };
 
-    let currentAnswer = '';
+    let currentSet = [];
+    let correctWord = '';
+    let score = 0;
     let questionCount = 0;
-    let correctAnswers = 0;
 
     function speak(text) {
       const utterance = new SpeechSynthesisUtterance(text);
@@ -85,40 +120,45 @@
       speechSynthesis.speak(utterance);
     }
 
-    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); // preload
+    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
 
-    function startGame() {
+    function showCategories() {
+      document.getElementById('home').style.display = 'none';
+      document.getElementById('score').style.display = 'none';
+      document.getElementById('categories').style.display = 'block';
+    }
+
+    function startGame(category) {
+      currentSet = data[category];
+      questionCount = 0;
+      score = 0;
+      document.getElementById('categories').style.display = 'none';
       document.getElementById('score').style.display = 'none';
       document.getElementById('game').style.display = 'block';
-      questionCount = 0;
-      correctAnswers = 0;
       nextQuestion();
     }
 
     function nextQuestion() {
       questionCount++;
-      const shuffled = animals.sort(() => 0.5 - Math.random());
-      const options = shuffled.slice(0, 3);
-      const correct = options[Math.floor(Math.random() * options.length)];
-      currentAnswer = correct.word;
-
-      speak(correct.word);
+      const options = [...currentSet].sort(() => 0.5 - Math.random()).slice(0, 3);
+      const answer = options[Math.floor(Math.random() * options.length)];
+      correctWord = answer.word;
+      speak(correctWord);
       const container = document.getElementById('images');
       container.innerHTML = '';
-      options.forEach(option => {
+      options.forEach(opt => {
         const btn = document.createElement('button');
         btn.className = 'image-button';
         const img = document.createElement('img');
-        img.src = option.image;
-        img.alt = '';
+        img.src = opt.image;
         btn.appendChild(img);
-        btn.onclick = () => checkAnswer(option.word);
+        btn.onclick = () => checkAnswer(opt.word);
         container.appendChild(btn);
       });
     }
 
     function checkAnswer(selected) {
-      if (selected === currentAnswer) correctAnswers++;
+      if (selected === correctWord) score++;
       if (questionCount < 5) {
         nextQuestion();
       } else {
@@ -128,7 +168,7 @@
 
     function endGame() {
       document.getElementById('game').style.display = 'none';
-      const stars = '⭐'.repeat(correctAnswers) + '⚪'.repeat(5 - correctAnswers);
+      const stars = '⭐'.repeat(score) + '⚪'.repeat(5 - score);
       document.getElementById('stars').innerText = `הציון שלך: ${stars}`;
       document.getElementById('score').style.display = 'block';
     }
