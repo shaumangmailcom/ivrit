@@ -2,7 +2,7 @@
 <html lang="he">
 <head>
   <meta charset="UTF-8">
-  <title>מבחן עברית לילדים - חיות בלבד</title>
+  <title>מבחן עברית לילדים - צבעים בלבד</title>
   <style>
     body {
       font-family: sans-serif;
@@ -48,7 +48,7 @@
   </style>
 </head>
 <body>
-  <h1>מבחן חיות בעברית</h1>
+  <h1>מבחן צבעים בעברית</h1>
   <div id="home">
     <button onclick="startGame()">התחל</button>
   </div>
@@ -66,10 +66,10 @@
   <audio id="fail-sound" src="https://www.soundjay.com/button/beep-10.mp3"></audio>
 
   <script>
-    const animals = [
-      { word: 'כלב', image: 'https://cdn-icons-png.flaticon.com/512/616/616408.png' },
-      { word: 'חתול', image: 'https://cdn-icons-png.flaticon.com/512/616/6164087.png' },
-      { word: 'פרה', image: 'https://cdn-icons-png.flaticon.com/512/1998/1998611.png' }
+    const colors = [
+      { word: 'אדום', image: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Red_circle.svg' },
+      { word: 'כחול', image: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Blue_circle.svg' },
+      { word: 'ירוק', image: 'https://upload.wikimedia.org/wikipedia/commons/f/fd/Green_circle.svg' }
     ];
 
     let correctWord = '';
@@ -110,10 +110,10 @@
 
     function nextQuestion() {
       questionCount++;
-      const options = [...animals].sort(() => 0.5 - Math.random()).slice(0, 3);
+      const options = [...colors].sort(() => 0.5 - Math.random()).slice(0, 3);
       const answer = options[Math.floor(Math.random() * options.length)];
       correctWord = answer.word;
-      speak(correctWord);
+      setTimeout(() => speak(correctWord), 500);
       const container = document.getElementById('game-images');
       container.innerHTML = '';
       options.forEach(opt => {
