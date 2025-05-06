@@ -74,6 +74,9 @@
     <button onclick="showCategories()">שחק קטגוריה אחרת</button>
   </div>
 
+  <audio id="success-sound" src="https://www.soundjay.com/buttons/sounds/button-4.mp3"></audio>
+  <audio id="fail-sound" src="https://www.soundjay.com/button/beep-10.mp3"></audio>
+
   <script>
     const data = {
       animals: [
@@ -88,8 +91,8 @@
       ],
       food: [
         { word: 'תפוח', image: 'https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg' },
-        { word: 'לחם', image: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/Bread.jpg' },
-        { word: 'עוגה', image: 'https://upload.wikimedia.org/wikipedia/commons/0/02/Birthday_cake.jpg' }
+        { word: 'לחם', image: 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Bread.jpg' },
+        { word: 'עוגה', image: 'https://upload.wikimedia.org/wikipedia/commons/f/f8/Cake.jpg' }
       ],
       family: [
         { word: 'אמא', image: 'https://upload.wikimedia.org/wikipedia/commons/e/ee/Mother_and_daughter_portrait.jpg' },
@@ -151,6 +154,9 @@
         btn.className = 'image-button';
         const img = document.createElement('img');
         img.src = opt.image;
+        img.onerror = () => {
+          img.src = 'https://via.placeholder.com/150?text=Image+not+found';
+        };
         btn.appendChild(img);
         btn.onclick = () => checkAnswer(opt.word);
         container.appendChild(btn);
@@ -158,7 +164,12 @@
     }
 
     function checkAnswer(selected) {
-      if (selected === correctWord) score++;
+      if (selected === correctWord) {
+        score++;
+        document.getElementById('success-sound').play();
+      } else {
+        document.getElementById('fail-sound').play();
+      }
       if (questionCount < 5) {
         nextQuestion();
       } else {
