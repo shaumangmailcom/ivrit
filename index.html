@@ -54,10 +54,22 @@
     let correctColor = '';
     let questionCount = 0;
     let score = 0;
+    let hebrewVoice = null;
+
+    // Load voices and pick a Hebrew one
+    function loadVoices() {
+      const voices = speechSynthesis.getVoices();
+      hebrewVoice = voices.find(v => v.lang === 'he-IL') || null;
+    }
+
+    speechSynthesis.onvoiceschanged = loadVoices;
 
     function speak(text) {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'he-IL';
+      if (hebrewVoice) {
+        utterance.voice = hebrewVoice;
+      }
       speechSynthesis.speak(utterance);
     }
 
@@ -76,7 +88,7 @@
     function nextQuestion() {
       const randomIndex = Math.floor(Math.random() * colors.length);
       correctColor = colors[randomIndex].name;
-      speak(correctColor);
+      setTimeout(() => speak(correctColor), 300); // delay slightly after click
     }
 
     function checkAnswer(selected) {
@@ -94,6 +106,10 @@
       questionCount = 0;
       document.getElementById('result').innerText = '';
       showColors();
+      // Cancel any existing speech
+      speechSynthesis.cancel();
+      // Ensure voices are loaded
+      loadVoices();
       nextQuestion();
     }
   </script>
