@@ -2,115 +2,135 @@
 <html lang="he">
 <head>
   <meta charset="UTF-8">
-  <title>מבחן צבעים בעברית</title>
+  <title>מבחן עברית - חיות</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: sans-serif;
+      background-color: #f9f9f9;
       text-align: center;
       direction: rtl;
-      background-color: #f0f0f0;
     }
-    h1 {
-      color: #333;
+
+    #game, #score {
+      display: none;
     }
-    #colors {
-      margin-top: 20px;
+
+    .image-button {
+      border: none;
+      background: none;
+      cursor: pointer;
+      margin: 10px;
+    }
+
+    .image-button img {
+      width: 150px;
+      height: 150px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    #images {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       gap: 20px;
+      margin-top: 20px;
     }
-    .color-button {
-      width: 100px;
-      height: 100px;
-      border: 4px solid #fff;
+
+    #stars {
+      font-size: 32px;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 18px;
+      margin-top: 20px;
       cursor: pointer;
-      border-radius: 50%;
-    }
-    #result {
-      margin-top: 30px;
-      font-size: 24px;
-      color: green;
     }
   </style>
 </head>
 <body>
-  <h1>מבחן צבעים</h1>
-  <p>הקשב לקול ובחר את הצבע הנכון</p>
-  <button onclick="startTest()">התחל מבחן</button>
-  <div id="colors"></div>
-  <div id="result"></div>
+  <h1>🐾</h1>
+  <button onclick="startGame()">התחל</button>
+
+  <div id="game">
+    <div id="images"></div>
+  </div>
+
+  <div id="score">
+    <div id="stars"></div>
+    <button onclick="startGame()">נסה שוב</button>
+  </div>
 
   <script>
-    const colors = [
-      {name: 'אדום', hex: 'red'},
-      {name: 'כחול', hex: 'blue'},
-      {name: 'ירוק', hex: 'green'},
-      {name: 'צהוב', hex: 'yellow'},
-      {name: 'כתום', hex: 'orange'},
-      {name: 'סגול', hex: 'purple'}
+    const animals = [
+      { word: 'כלב', image: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/Jack_Russell_Terrier_1.jpg' },
+      { word: 'חתול', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/81_INF_DIV_SSI.jpg/320px-81_INF_DIV_SSI.jpg' },
+      { word: 'פרה', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cow_female_black_white.jpg/320px-Cow_female_black_white.jpg' },
+      { word: 'סוס', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Horse_in_field.jpg/320px-Horse_in_field.jpg' },
+      { word: 'תרנגול', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Rooster_portrait2.jpg/320px-Rooster_portrait2.jpg' },
+      { word: 'דג', image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Goldfish3.jpg/320px-Goldfish3.jpg' }
     ];
 
-    let correctColor = '';
+    let currentAnswer = '';
     let questionCount = 0;
-    let score = 0;
-    let hebrewVoice = null;
-
-    // Load voices and pick a Hebrew one
-    function loadVoices() {
-      const voices = speechSynthesis.getVoices();
-      hebrewVoice = voices.find(v => v.lang === 'he-IL') || null;
-    }
-
-    speechSynthesis.onvoiceschanged = loadVoices;
+    let correctAnswers = 0;
 
     function speak(text) {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'he-IL';
-      if (hebrewVoice) {
-        utterance.voice = hebrewVoice;
-      }
+      const voice = speechSynthesis.getVoices().find(v => v.lang === 'he-IL');
+      if (voice) utterance.voice = voice;
       speechSynthesis.speak(utterance);
     }
 
-    function showColors() {
-      const container = document.getElementById('colors');
+    speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices(); // preload
+
+    function startGame() {
+      document.getElementById('score').style.display = 'none';
+      document.getElementById('game').style.display = 'block';
+      questionCount = 0;
+      correctAnswers = 0;
+      nextQuestion();
+    }
+
+    function nextQuestion() {
+      questionCount++;
+      const shuffled = animals.sort(() => 0.5 - Math.random());
+      const options = shuffled.slice(0, 3);
+      const correct = options[Math.floor(Math.random() * options.length)];
+      currentAnswer = correct.word;
+
+      speak(correct.word);
+      const container = document.getElementById('images');
       container.innerHTML = '';
-      colors.forEach(color => {
-        const btn = document.createElement('div');
-        btn.className = 'color-button';
-        btn.style.backgroundColor = color.hex;
-        btn.onclick = () => checkAnswer(color.name);
+      options.forEach(option => {
+        const btn = document.createElement('button');
+        btn.className = 'image-button';
+        const img = document.createElement('img');
+        img.src = option.image;
+        img.alt = '';
+        btn.appendChild(img);
+        btn.onclick = () => checkAnswer(option.word);
         container.appendChild(btn);
       });
     }
 
-    function nextQuestion() {
-      const randomIndex = Math.floor(Math.random() * colors.length);
-      correctColor = colors[randomIndex].name;
-      setTimeout(() => speak(correctColor), 300); // delay slightly after click
-    }
-
     function checkAnswer(selected) {
-      if (selected === correctColor) score++;
-      questionCount++;
+      if (selected === currentAnswer) correctAnswers++;
       if (questionCount < 5) {
         nextQuestion();
       } else {
-        document.getElementById('result').innerText = `סיימת! ציון: ${score} מתוך 5`;
+        endGame();
       }
     }
 
-    function startTest() {
-      score = 0;
-      questionCount = 0;
-      document.getElementById('result').innerText = '';
-      showColors();
-      // Cancel any existing speech
-      speechSynthesis.cancel();
-      // Ensure voices are loaded
-      loadVoices();
-      nextQuestion();
+    function endGame() {
+      document.getElementById('game').style.display = 'none';
+      const stars = '⭐'.repeat(correctAnswers) + '⚪'.repeat(5 - correctAnswers);
+      document.getElementById('stars').innerText = `הציון שלך: ${stars}`;
+      document.getElementById('score').style.display = 'block';
     }
   </script>
 </body>
