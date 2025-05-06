@@ -45,6 +45,18 @@
       margin-top: 20px;
       cursor: pointer;
     }
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+    @keyframes correct {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.15); }
+      100% { transform: scale(1); }
+    }
   </style>
 </head>
 <body>
@@ -62,8 +74,8 @@
     <button onclick="location.reload()">שחק שוב</button>
   </div>
 
-  <audio id="success-sound" src="https://www.soundjay.com/buttons/sounds/button-4.mp3"></audio>
-  <audio id="fail-sound" src="https://www.soundjay.com/button/beep-10.mp3"></audio>
+  <audio id="success-sound" src="https://www.soundjay.com/button/sounds/button-10.mp3"></audio>
+  <audio id="fail-sound" src="https://www.soundjay.com/button/sounds/beep-05.mp3"></audio>
 
   <script>
     const colors = [
@@ -106,22 +118,30 @@
         div.className = 'color-circle';
         div.style.backgroundColor = opt.color;
         btn.appendChild(div);
-        btn.onclick = () => checkAnswer(opt.word);
+        btn.onclick = () => checkAnswer(opt.word, btn);
         container.appendChild(btn);
       });
     }
 
-    function checkAnswer(selected) {
+    function checkAnswer(selected, selectedBtn) {
+      const buttons = document.querySelectorAll('.image-button');
+      buttons.forEach(btn => btn.style.animation = '');
+
       if (selected === correctWord) {
         score++;
         document.getElementById('success-sound').play();
+        selectedBtn.style.animation = 'correct 0.4s';
       } else {
         document.getElementById('fail-sound').play();
+        buttons.forEach(btn => {
+          btn.style.animation = 'shake 0.3s';
+        });
       }
+
       if (questionCount < 5) {
-        nextQuestion();
+        setTimeout(nextQuestion, 600);
       } else {
-        endGame();
+        setTimeout(endGame, 600);
       }
     }
 
