@@ -28,7 +28,7 @@
       border-radius: 16px;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
     }
-    #images {
+    #category-images, #game-images {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
@@ -55,7 +55,7 @@
 
   <div id="categories">
     <h2>בחר קטגוריה</h2>
-    <div id="images">
+    <div id="category-images">
       <button class="image-button" onclick="startGame('animals')"><img src="https://upload.wikimedia.org/wikipedia/commons/5/5f/Jack_Russell_Terrier_1.jpg" alt="animals"></button>
       <button class="image-button" onclick="startGame('colors')"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Red_circle.svg/512px-Red_circle.svg.png" alt="colors"></button>
       <button class="image-button" onclick="startGame('food')"><img src="https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg" alt="food"></button>
@@ -66,7 +66,7 @@
   </div>
 
   <div id="game">
-    <div id="images"></div>
+    <div id="game-images"></div>
   </div>
 
   <div id="score">
@@ -144,7 +144,7 @@
       const answer = options[Math.floor(Math.random() * options.length)];
       correctWord = answer.word;
       speak(correctWord);
-      const container = document.getElementById('images');
+      const container = document.getElementById('game-images');
       container.innerHTML = '';
       options.forEach(opt => {
         const btn = document.createElement('button');
