@@ -2,7 +2,7 @@
 <html lang="he">
 <head>
   <meta charset="UTF-8">
-  <title>מבחן עברית לילדים - צבעים בלבד</title>
+  <title>מבחן עברית לילדים</title>
   <style>
     body {
       font-family: sans-serif;
@@ -16,12 +16,19 @@
     #game, #score {
       display: none;
     }
-    .color-circle {
+    .color-circle, .animal-icon {
       width: 150px;
       height: 150px;
       border-radius: 50%;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
       margin: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+    }
+    .animal-icon {
+      background-color: #ffffff;
     }
     .image-button {
       border: none;
@@ -60,7 +67,7 @@
   </style>
 </head>
 <body>
-  <h1>מבחן צבעים בעברית</h1>
+  <h1>מבחן בעברית לילדים</h1>
   <div id="home">
     <button onclick="startGame()">התחל</button>
   </div>
@@ -78,14 +85,31 @@
   <audio id="fail-sound" src="https://www.soundjay.com/button/sounds/beep-05.mp3"></audio>
 
   <script>
-    const colors = [
-      { word: 'אדום', color: 'red' },
-      { word: 'כחול', color: 'blue' },
-      { word: 'ירוק', color: 'green' },
-      { word: 'צהוב', color: 'yellow' },
-      { word: 'סגול', color: 'purple' }
+    const stages = [
+      {
+        name: 'צבעים',
+        items: [
+          { word: 'אדום', type: 'color', value: 'red' },
+          { word: 'כחול', type: 'color', value: 'blue' },
+          { word: 'ירוק', type: 'color', value: 'green' },
+          { word: 'צהוב', type: 'color', value: 'yellow' },
+          { word: 'סגול', type: 'color', value: 'purple' }
+        ]
+      },
+      {
+        name: 'חיות',
+        items: [
+          { word: 'חתול', type: 'icon', value: '🐱' },
+          { word: 'כלב', type: 'icon', value: '🐶' },
+          { word: 'פרה', type: 'icon', value: '🐮' },
+          { word: 'כבשה', type: 'icon', value: '🐑' },
+          { word: 'תרנגול', type: 'icon', value: '🐔' }
+        ]
+      }
     ];
 
+    let stageIndex = 0;
+    let items = stages[stageIndex].items;
     let correctWord = '';
     let score = 0;
     let questionCount = 0;
@@ -105,7 +129,7 @@
 
     function nextQuestion() {
       questionCount++;
-      const options = [...colors];
+      const options = [...items];
       const answer = options[Math.floor(Math.random() * options.length)];
       correctWord = answer.word;
       setTimeout(() => speak(correctWord), 500);
@@ -115,8 +139,13 @@
         const btn = document.createElement('button');
         btn.className = 'image-button';
         const div = document.createElement('div');
-        div.className = 'color-circle';
-        div.style.backgroundColor = opt.color;
+        if (opt.type === 'color') {
+          div.className = 'color-circle';
+          div.style.backgroundColor = opt.value;
+        } else if (opt.type === 'icon') {
+          div.className = 'animal-icon';
+          div.textContent = opt.value;
+        }
         btn.appendChild(div);
         btn.onclick = () => checkAnswer(opt.word, btn);
         container.appendChild(btn);
@@ -141,13 +170,20 @@
       if (questionCount < 5) {
         setTimeout(nextQuestion, 600);
       } else {
-        setTimeout(endGame, 600);
+        stageIndex++;
+        if (stageIndex < stages.length) {
+          questionCount = 0;
+          items = stages[stageIndex].items;
+          setTimeout(nextQuestion, 600);
+        } else {
+          setTimeout(endGame, 600);
+        }
       }
     }
 
     function endGame() {
       document.getElementById('game').style.display = 'none';
-      const stars = '⭐'.repeat(score) + '⚪'.repeat(5 - score);
+      const stars = '⭐'.repeat(score) + '⚪'.repeat(10 - score);
       document.getElementById('stars').innerText = `הציון שלך: ${stars}`;
       document.getElementById('score').style.display = 'block';
     }
